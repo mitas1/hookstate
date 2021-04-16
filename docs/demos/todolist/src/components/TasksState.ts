@@ -1,4 +1,7 @@
-import { createState, useState } from '@hookstate/core';
+import {
+    createState,
+    useState
+} from "@hookstate/core";
 
 export interface Task {
     id: string;
@@ -6,26 +9,32 @@ export interface Task {
     done: boolean;
 }
 
-const state = createState<Task[]>(new Promise(resolve => {
-    // Emulate asynchronous loading of the initial state data.
-    // The real application would run some fetch request,
-    // to get the initial data from a server.
-    setTimeout(() => resolve([
+const fetchFromApi = async () => {
+    // Just an example
+    await fetch(
+        "https://raw.githubusercontent.com/avkonst/hookstate/master/CNAME"
+    );
+
+    return [
         {
-            id: '1',
-            name: 'Discover Hookstate',
+            id: "1",
+            name: "Discover Hookstate",
             done: true,
-        }, {
-            id: '2',
-            name: 'Replace Redux by Hookstate',
+        },
+        {
+            id: "2",
+            name: "Replace Redux by Hookstate",
             done: false,
-        }, {
-            id: '3',
-            name: 'Enjoy simpler code and faster application',
+        },
+        {
+            id: "3",
+            name: "Enjoy simpler code and faster application",
             done: false,
-        }
-    ]), 3000)    
-}))
+        },
+    ];
+};
+
+const state = createState<Task[]>(fetchFromApi());
 
 export function useTasksState() {
     // This function exposes the state directly.
@@ -34,13 +43,6 @@ export function useTasksState() {
     // Both options are valid and you need to use one or another,
     // depending on your circumstances. Apply your engineering judgement
     // to choose the best option. If unsure, exposing the state directly
-    // like it is done below is a safe bet.        
-    return useState(state)
+    // like it is done below is a safe bet.
+    return useState(state);
 }
-
-// for example purposes, let's update the state outside of a React component
-setTimeout(() => state[state.length].set({
-    id: '100',
-    name: 'Spread few words about Hookstate',
-    done: false
-}), 10000)
